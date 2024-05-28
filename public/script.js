@@ -1,6 +1,5 @@
 const msgContainer = document.getElementsByClassName('chat')[0];
 const inp = document.getElementById('inp');
-const btn = document.getElementById('btn');
 const socket = io();
 
 function msgSend(){
@@ -10,10 +9,27 @@ function msgSend(){
     }
 };
 
-socket.on('server_msg', (socket) => {
+function sendMsgInRoom(){
+    const msg = document.getElementById('inp_room_name').value;
+    socket.emit('msgToRoom', {msg})
+}
+
+function createRoom(){
+    const name = document.getElementById('inp_room_name').value;
+    socket.emit('roomCreate', {name})
+};
+
+function joinRoom(){
+    const name = document.getElementById('inp_room_name').value;
+    socket.emit('roomJoin', {name})
+};
+
+socket.on('server_msg', (data) => {
     let para = document.createElement('p');
-    para.textContent = socket.msg;
+    para.textContent = data.msg;
     msgContainer.appendChild(para)
 });
 
-btn.addEventListener('click', msgSend);
+socket.on('serverMsgToRoom', (data) => {
+    console.log(data)
+})
